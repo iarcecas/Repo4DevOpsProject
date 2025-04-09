@@ -1,0 +1,7 @@
+/auth-service/node_modules
+/auth-ui/node_modules
+
+/community-service/node_modules
+/community-ui/node_modules
+
+/host/node_modules
