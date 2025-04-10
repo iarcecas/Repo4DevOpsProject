@@ -1,0 +1,31 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  nodeVersion: '18.20.8'
+
+stages:
+- stage: Build_Auth_Service
+  displayName: 'Build Auth Service'
+  jobs:
+  - job: Build
+    displayName: 'Build Node.js Service'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(nodeVersion)
+      displayName: 'Install Node.js $(nodeVersion)'
+
+    - script: |
+        echo "Navigating to auth-service directory..."
+        cd auth-service
+        echo "Running npm install..."
+        npm install
+      displayName: 'Install Dependencies for auth-service'
+      workingDirectory: $(Build.SourcesDirectory)
+
+# --- Stages for other services, testing, analysis, deployment will be added later ---
+
