@@ -23,7 +23,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    dummyCommunityQuery: String
+    getPosts(category: String): [CommunityPost] # <-- Add this line
   }
 
   type Mutation {
