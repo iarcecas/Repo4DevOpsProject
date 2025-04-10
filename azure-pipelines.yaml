@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: 'VM-MSI'
 
 variables:
   nodeVersion: '18.20.8'
