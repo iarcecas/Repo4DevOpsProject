@@ -55,6 +55,13 @@ const resolvers = {
       await newRequest.save();
       return newRequest;
     },
+    volunteerForRequest: async (_, { requestId, volunteerId }) => {
+       return await HelpRequest.findByIdAndUpdate(
+         requestId,
+         { $addToSet: { volunteers: volunteerId } },
+         { new: true }
+       );
+     },
   },
 };
 
