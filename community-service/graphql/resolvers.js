@@ -26,6 +26,10 @@ const resolvers = {
       const filter = category ? { category } : {};
       return await CommunityPost.find(filter).sort({ createdAt: -1 });
     },
+    getHelpRequests: async (_, { isResolved }) => {
+      const filter = typeof isResolved === 'boolean' ? { isResolved } : {};
+      return await HelpRequest.find(filter).sort({ createdAt: -1 });
+    },
   },
   Mutation: {
     createPost: async (_, { input }) => {
@@ -39,7 +43,6 @@ const resolvers = {
       await newPost.save();
       return newPost;
     },
-
     createHelpRequest: async (_, { input }) => {
       if (!input || !input.author || !input.description) {
           throw new Error("Missing required fields for creating a help request.");
@@ -50,7 +53,6 @@ const resolvers = {
           volunteers: []
       });
       await newRequest.save();
-
       return newRequest;
     },
   },

@@ -21,7 +21,7 @@ const typeDefs = gql`
     description: String!
     location: String
     isResolved: Boolean!
-    volunteers: [ObjectId] 
+    volunteers: [ObjectId]
     createdAt: Date!
     updatedAt: Date!
   }
@@ -36,7 +36,7 @@ const typeDefs = gql`
   input CreateHelpRequestInput {
     author: ObjectId!
     description: String!
-    location: String # Optional location
+    location: String
   }
 
   type Query {
@@ -45,7 +45,6 @@ const typeDefs = gql`
 
   type Mutation {
     createPost(input: CreatePostInput!): CommunityPost!
-
     createHelpRequest(input: CreateHelpRequestInput!): HelpRequest!
   }
 `;
