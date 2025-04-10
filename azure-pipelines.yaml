@@ -8,13 +8,14 @@ variables:
   nodeVersion: '18.20.8'
   authServiceDir: 'auth-service'
   authUiDir: 'auth-ui'
+  communityServiceDir: 'community-service'
 
 stages:
 - stage: Build_And_Install
   displayName: 'Install Dependencies and Build'
   jobs:
   - job: BuildAndInstall 
-    displayName: 'Install & Build Auth Service and Auth UI'
+    displayName: 'Install & Build Services and Auth UI' 
     steps:
     - task: NodeTool@0
       inputs:
@@ -38,3 +39,11 @@ stages:
         npm run build
       displayName: 'Build $(authUiDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(authUiDir)'
+
+    - script: |
+        echo "Running npm ci for $(communityServiceDir)..."
+        npm ci
+      displayName: 'Install Dependencies for $(communityServiceDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)'
+
+
