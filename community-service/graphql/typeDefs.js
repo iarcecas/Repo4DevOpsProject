@@ -15,6 +15,17 @@ const typeDefs = gql`
     updatedAt: Date!
   }
 
+  type HelpRequest {
+    id: ID!
+    author: ObjectId!
+    description: String!
+    location: String
+    isResolved: Boolean!
+    volunteers: [ObjectId] 
+    createdAt: Date!
+    updatedAt: Date!
+  }
+
   input CreatePostInput {
     author: ObjectId!
     title: String!
@@ -22,12 +33,20 @@ const typeDefs = gql`
     category: String!
   }
 
+  input CreateHelpRequestInput {
+    author: ObjectId!
+    description: String!
+    location: String # Optional location
+  }
+
   type Query {
-    getPosts(category: String): [CommunityPost] # <-- Add this line
+    getPosts(category: String): [CommunityPost]
   }
 
   type Mutation {
     createPost(input: CreatePostInput!): CommunityPost!
+
+    createHelpRequest(input: CreateHelpRequestInput!): HelpRequest!
   }
 `;
 
