@@ -6,13 +6,15 @@ pool:
 
 variables:
   nodeVersion: '18.20.8'
+  authServiceDir: 'auth-service'
+  authUiDir: 'auth-ui'
 
 stages:
-- stage: Build_Auth_Service
-  displayName: 'Build Auth Service'
+- stage: Build_And_Install
+  displayName: 'Install Dependencies and Build'
   jobs:
-  - job: Build
-    displayName: 'Build Node.js Service'
+  - job: BuildAndInstall 
+    displayName: 'Install & Build Auth Service and Auth UI'
     steps:
     - task: NodeTool@0
       inputs:
@@ -20,12 +22,19 @@ stages:
       displayName: 'Install Node.js $(nodeVersion)'
 
     - script: |
-        echo "Navigating to auth-service directory..."
-        cd auth-service
-        echo "Running npm install..."
-        npm install
-      displayName: 'Install Dependencies for auth-service'
-      workingDirectory: $(Build.SourcesDirectory)
+        echo "Running npm ci for $(authServiceDir)..."
+        npm ci
+      displayName: 'Install Dependencies for $(authServiceDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(authServiceDir)'
 
-# --- Stages for other services, testing, analysis, deployment will be added later ---
+    - script: |
+        echo "Running npm ci for $(authUiDir)..."
+        npm ci
+      displayName: 'Install Dependencies for $(authUiDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(authUiDir)'
 
+    - script: |
+        echo "Building $(authUiDir)..."
+        npm run build
+      displayName: 'Build $(authUiDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(authUiDir)'
