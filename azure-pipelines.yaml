@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool:
-  name: 'VM-MSI'
+  name: 'COMP367-Windows'
 
 variables:
   nodeVersion: '18.20.8'
