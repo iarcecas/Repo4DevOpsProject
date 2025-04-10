@@ -41,11 +41,13 @@ const typeDefs = gql`
 
   type Query {
     getPosts(category: String): [CommunityPost]
+    getHelpRequests(isResolved: Boolean): [HelpRequest]
   }
 
   type Mutation {
     createPost(input: CreatePostInput!): CommunityPost!
     createHelpRequest(input: CreateHelpRequestInput!): HelpRequest!
+    volunteerForRequest(requestId: ID!, volunteerId: ObjectId!): HelpRequest
   }
 `;
 
