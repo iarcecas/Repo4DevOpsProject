@@ -1,5 +1,4 @@
 import CommunityPost from '../models/CommunityPost.js';
-
 import mongoose from 'mongoose';
 import { GraphQLScalarType, Kind } from 'graphql';
 
@@ -22,7 +21,10 @@ const resolvers = {
   }),
 
   Query: {
-    dummyCommunityQuery: () => "Community service dummy query successful."
+    getPosts: async (_, { category }) => {
+      const filter = category ? { category } : {};
+      return await CommunityPost.find(filter).sort({ createdAt: -1 });
+    },
   },
   Mutation: {
     createPost: async (_, { input }) => {
@@ -32,7 +34,6 @@ const resolvers = {
       if (!['news', 'discussion'].includes(input.category)) {
           throw new Error("Invalid category specified for post.");
       }
-
       const newPost = new CommunityPost(input);
       await newPost.save();
       return newPost;
