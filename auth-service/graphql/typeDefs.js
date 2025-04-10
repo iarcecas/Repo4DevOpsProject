@@ -1,31 +1,30 @@
 import { gql } from 'graphql-tag';
 
 const typeDefs = gql`
-    scalar Date
+  scalar Date
 
-    type User {
+  type User {
     id: ID!
-    username: String! 
-    email: String!  
-    role: String!     
-    createdAt: Date! 
-    }
+    username: String!
+    email: String!
+    role: String!
+    createdAt: Date!
+  }
 
-    type AuthPayload {
-    token: String!  
-    user: User!    
-    }
+  type AuthPayload {
+    token: String!
+    user: User!
+  }
 
-    type Query {
+  type Query {
     dummyAuthQuery: String
-    }
+  }
 
-    type Mutation {
+  type Mutation {
     signup(username: String!, email: String!, password: String!, role: String!): AuthPayload!
-
-    # --- login and logout mutations will be added in later steps ---
-    }
+    login(email: String!, password: String!): AuthPayload!
+    # logout mutation will be added later
+  }
 `;
 
 export default typeDefs;
-            
