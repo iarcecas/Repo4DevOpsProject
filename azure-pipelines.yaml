@@ -5,17 +5,18 @@ pool:
   name: 'COMP367-Windows'
 
 variables:
-  nodeVersion: '18.20.8'
+  nodeVersion: '18.x'
   authServiceDir: 'auth-service'
   authUiDir: 'auth-ui'
   communityServiceDir: 'community-service'
+  communityUiDir: 'community-ui'
 
 stages:
 - stage: Build_And_Install
   displayName: 'Install Dependencies and Build'
   jobs:
-  - job: BuildAndInstall 
-    displayName: 'Install & Build Services and Auth UI' 
+  - job: BuildAndInstall
+    displayName: 'Install & Build Services and UIs'
     steps:
     - task: NodeTool@0
       inputs:
@@ -46,4 +47,14 @@ stages:
       displayName: 'Install Dependencies for $(communityServiceDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)'
 
+    - script: |
+        echo "Running npm ci for $(communityUiDir)..."
+        npm ci
+      displayName: 'Install Dependencies for $(communityUiDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityUiDir)'
 
+    - script: |
+        echo "Building $(communityUiDir)..."
+        npm run build
+      displayName: 'Build $(communityUiDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityUiDir)'
