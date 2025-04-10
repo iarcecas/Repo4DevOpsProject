@@ -1,4 +1,5 @@
 import CommunityPost from '../models/CommunityPost.js';
+import HelpRequest from '../models/HelpRequest.js';
 import mongoose from 'mongoose';
 import { GraphQLScalarType, Kind } from 'graphql';
 
@@ -37,6 +38,20 @@ const resolvers = {
       const newPost = new CommunityPost(input);
       await newPost.save();
       return newPost;
+    },
+
+    createHelpRequest: async (_, { input }) => {
+      if (!input || !input.author || !input.description) {
+          throw new Error("Missing required fields for creating a help request.");
+      }
+      const newRequest = new HelpRequest({
+          ...input,
+          isResolved: false,
+          volunteers: []
+      });
+      await newRequest.save();
+
+      return newRequest;
     },
   },
 };
