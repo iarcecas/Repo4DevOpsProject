@@ -6,9 +6,10 @@ pool:
 
 variables:
   nodeVersion: '18.20.8'
+  authServiceDir: 'auth-service'
 
 stages:
-- stage: Build_Auth_Service
+- stage: Build_And_Test_Auth_Service
   displayName: 'Build Auth Service'
   jobs:
   - job: Build
@@ -26,6 +27,28 @@ stages:
         npm install
       displayName: 'Install Dependencies for auth-service'
       workingDirectory: $(Build.SourcesDirectory)
+  
+    - script: |
+        echo "Running tests with coverage for $(authServiceDir)..."
+        cd $(authServiceDir)
+        npm run test:coverage
+      displayName: 'Run Unit Tests with Coverage for $(authServiceDir)'
+      workingDirectory: $(Build.SourcesDirectory)
 
-# --- Stages for other services, testing, analysis, deployment will be added later ---
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit' 
+        testResultsFiles: '$(Build.SourcesDirectory)/$(authServiceDir)/junit.xml'
+        failTaskOnFailedTests: true
+      displayName: 'Publish Test Results'
+      condition: succeededOrFailed()
+
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(Build.SourcesDirectory)/$(authServiceDir)/coverage/cobertura-coverage.xml'
+      displayName: 'Publish Code Coverage Results'
+      condition: succeededOrFailed()
+
+# --- Stages for other services, analysis, deployment will be added later ---
 
