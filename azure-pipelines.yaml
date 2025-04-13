@@ -94,6 +94,21 @@ stages:
         ArtifactName: 'host-dist'
         publishLocation: 'Container'
       displayName: 'Publish host build artifact (dist folder)'  
+
+# For AB#252 - Simulated Analyze Stage with SonarQube
+- stage: Analyze
+  displayName: 'Simulate Code Analysis with SonarQube'
+  dependsOn: Build_And_Install
+  jobs:
+    - job: SimulatedSonarQube
+      displayName: 'Simulated SonarQube Analysis Job'
+      steps:
+        - script: |
+            echo "Simulating static code analysis..."
+            echo "Pretending to run SonarQube Scanner..."
+            echo "No critical vulnerabilities found."
+          displayName: 'Simulated SonarQube Analysis'
+
 # For 259-- Deploy stages for the CD Pipeline
 - stage: Deploy
   displayName: 'Deploy Stage'
