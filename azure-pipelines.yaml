@@ -94,3 +94,19 @@ stages:
         ArtifactName: 'host-dist'
         publishLocation: 'Container'
       displayName: 'Publish host build artifact (dist folder)'  
+# For 259-- Deploy stages for the CD Pipeline
+- stage: Deploy
+  displayName: 'Deploy Stage'
+  dependsOn: Build_And_Install
+  jobs:
+    - job: DeployHost
+      displayName: 'Simulate Deploy for host'
+      steps:
+       - download: current
+         artifact: host-dist
+
+       - script: |
+          echo "Simulating deployment of host-dist..."
+          echo "Copied contents to simulated web server directory..."
+          echo "Deployed at: http://localhost:5000 (simulated)"
+         displayName: 'Simulate Deployment for Host'
