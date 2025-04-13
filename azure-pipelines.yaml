@@ -2,126 +2,216 @@ trigger:
 - main
 
 pool:
-  name: 'COMP367-Windows' 
+  name: 'COMP367-Windows'
 
 variables:
-  nodeVersion: '18.x' 
+  nodeVersion: '18.x'
   authServiceDir: 'auth-service'
   authUiDir: 'auth-ui'
   communityServiceDir: 'community-service'
   communityUiDir: 'community-ui'
-  hostDir: 'host' 
+  hostDir: 'host'
+  testResultsFile: 'junit.xml'
+  coverageReportDir: 'coverage'
+  coverageReportFile: '$(coverageReportDir)/cobertura-coverage.xml'
 
 stages:
-- stage: Build_And_Install
-  displayName: 'Install Dependencies and Build'
+- stage: Build
+  displayName: 'Build, Test, Analyze, and Publish Artifacts'
   jobs:
-  - job: BuildAndInstall
-    displayName: 'Install & Build Services, UIs, and Host'
+  - job: BuildTestAnalyzePublish
+    displayName: 'Build, Test, Analyze & Publish Job'
     steps:
     - task: NodeTool@0
       inputs:
         versionSpec: $(nodeVersion)
       displayName: 'Install Node.js $(nodeVersion)'
 
-    - script: |
-        echo "Running npm ci for $(authServiceDir)..."
-        npm ci
+    - script: npm ci
       displayName: 'Install Dependencies for $(authServiceDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(authServiceDir)'
-    
-    - script: |
-        echo "Running npm ci for $(communityServiceDir)..."
-        npm ci
+
+    - script: npm ci
       displayName: 'Install Dependencies for $(communityServiceDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)'
 
-# FOR AB 249 auth-service
-    - script: |
-        echo "Running unit tests for $(authServiceDir)..."
-        node --experimental-vm-modules node_modules/jest/bin/jest.js
-      displayName: 'Run Tests for $(authServiceDir)'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/$(authServiceDir)'
-
-# FOR AB 249 community-service
-    - script: |
-        echo "Running unit tests for $(communityServiceDir)..."
-        node --experimental-vm-modules node_modules/jest/bin/jest.js
-      displayName: 'Run Tests for $(communityServiceDir)'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)'
-
-
-    - script: |
-        echo "Running npm ci for $(authUiDir)..."
-        npm ci
+    - script: npm ci
       displayName: 'Install Dependencies for $(authUiDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(authUiDir)'
 
-    - script: |
-        echo "Building $(authUiDir)..."
-        npm run build
-      displayName: 'Build $(authUiDir)'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/$(authUiDir)'
-
-    - script: |
-        echo "Running npm ci for $(communityUiDir)..."
-        npm ci
+    - script: npm ci
       displayName: 'Install Dependencies for $(communityUiDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityUiDir)'
 
-    - script: |
-        echo "Building $(communityUiDir)..."
-        npm run build
-      displayName: 'Build $(communityUiDir)'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityUiDir)'
-
-    - script: |
-        echo "Running npm ci for $(hostDir)..."
-        npm ci
+    - script: npm ci
       displayName: 'Install Dependencies for $(hostDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(hostDir)'
 
-    - script: |
-        echo "Building $(hostDir)..."
-        npm run build
+    - script: node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --reporters=default --reporters=jest-junit --coverage --coverageReporters=cobertura
+      displayName: 'Run Tests & Coverage for $(authServiceDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(authServiceDir)'
+
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(testResultsFile)'
+        searchFolder: '$(System.DefaultWorkingDirectory)/$(authServiceDir)'
+      displayName: 'Publish Test Results for $(authServiceDir)'
+      condition: succeededOrFailed()
+
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(coverageReportFile)'
+        reportDirectory: '$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(coverageReportDir)'
+      displayName: 'Publish Code Coverage for $(authServiceDir)'
+      condition: succeededOrFailed()
+
+    - script: node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --reporters=default --reporters=jest-junit --coverage --coverageReporters=cobertura
+      displayName: 'Run Tests & Coverage for $(communityServiceDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)'
+
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(testResultsFile)'
+        searchFolder: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)'
+      displayName: 'Publish Test Results for $(communityServiceDir)'
+      condition: succeededOrFailed()
+
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(coverageReportFile)'
+        reportDirectory: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(coverageReportDir)'
+      displayName: 'Publish Code Coverage for $(communityServiceDir)'
+      condition: succeededOrFailed()
+
+    - script: npm run lint
+      displayName: 'Run Lint for $(authServiceDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(authServiceDir)'
+      continueOnError: true
+
+    - script: npm run lint
+      displayName: 'Run Lint for $(communityServiceDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)'
+      continueOnError: true
+
+    - script: npm run lint
+      displayName: 'Run Lint for $(authUiDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(authUiDir)'
+      continueOnError: true
+
+    - script: npm run lint
+      displayName: 'Run Lint for $(communityUiDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityUiDir)'
+      continueOnError: true
+
+    - script: npm run lint
+      displayName: 'Run Lint for $(hostDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(hostDir)'
+      continueOnError: true
+
+    - script: npm run build
+      displayName: 'Build $(authUiDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(authUiDir)'
+
+    - script: npm run build
+      displayName: 'Build $(communityUiDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityUiDir)'
+
+    - script: npm run build
       displayName: 'Build $(hostDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(hostDir)'
-    
-  # FOR AB 257 - Publish Artifact for Host
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/$(authServiceDir)'
+        ArtifactName: 'auth-service'
+        publishLocation: 'Container'
+      displayName: 'Publish artifact: auth-service'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)'
+        ArtifactName: 'community-service'
+        publishLocation: 'Container'
+      displayName: 'Publish artifact: community-service'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/$(authUiDir)/dist'
+        ArtifactName: 'auth-ui-dist'
+        publishLocation: 'Container'
+      displayName: 'Publish artifact: auth-ui-dist'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/$(communityUiDir)/dist'
+        ArtifactName: 'community-ui-dist'
+        publishLocation: 'Container'
+      displayName: 'Publish artifact: community-ui-dist'
+
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(System.DefaultWorkingDirectory)/$(hostDir)/dist'
         ArtifactName: 'host-dist'
         publishLocation: 'Container'
-      displayName: 'Publish host build artifact (dist folder)'  
+      displayName: 'Publish artifact: host-dist'
 
-# For AB#252 - Simulated Analyze Stage with SonarQube
-- stage: Analyze
-  displayName: 'Simulate Code Analysis with SonarQube'
-  dependsOn: Build_And_Install
+- stage: Deploy_QAT
+  displayName: 'Deploy to QAT Environment'
+  dependsOn: Build
+  condition: succeeded()
   jobs:
-    - job: SimulatedSonarQube
-      displayName: 'Simulated SonarQube Analysis Job'
-      steps:
-        - script: |
-            echo "Simulating static code analysis..."
-            echo "Pretending to run SonarQube Scanner..."
-            echo "No critical vulnerabilities found."
-          displayName: 'Simulated SonarQube Analysis'
+  - job: DeployQATJob
+    displayName: 'Deploy to QAT'
+    steps:
+    - script: echo 'Downloading artifacts for QAT...'
+      displayName: 'Simulate Artifact Download'
 
-# For 259-- Deploy stages for the CD Pipeline
-- stage: Deploy
-  displayName: 'Deploy Stage'
-  dependsOn: Build_And_Install
+    - script: |
+        echo "Simulating deployment of auth-service to QAT..."
+        echo "Simulating deployment of community-service to QAT..."
+        echo "Simulating deployment of auth-ui-dist to QAT..."
+        echo "Simulating deployment of community-ui-dist to QAT..."
+        echo "Simulating deployment of host-dist to QAT..."
+      displayName: 'Simulate Deployment to QAT'
+
+- stage: Deploy_Staging
+  displayName: 'Deploy to Staging Environment'
+  dependsOn: Deploy_QAT
+  condition: succeeded()
   jobs:
-    - job: DeployHost
-      displayName: 'Simulate Deploy for host'
-      steps:
-       - download: current
-         artifact: host-dist
+  - job: DeployStagingJob
+    displayName: 'Deploy to Staging'
+    steps:
+    - script: echo 'Downloading artifacts for Staging...'
+      displayName: 'Simulate Artifact Download'
 
-       - script: |
-          echo "Simulating deployment of host-dist..."
-          echo "Copied contents to simulated web server directory..."
-          echo "Deployed at: http://localhost:5000 (simulated)"
-         displayName: 'Simulate Deployment for Host'
+    - script: |
+        echo "Simulating deployment of auth-service to Staging..."
+        echo "Simulating deployment of community-service to Staging..."
+        echo "Simulating deployment of auth-ui-dist to Staging..."
+        echo "Simulating deployment of community-ui-dist to Staging..."
+        echo "Simulating deployment of host-dist to Staging..."
+      displayName: 'Simulate Deployment to Staging'
+
+- stage: Deploy_Prod
+  displayName: 'Deploy to Production Environment'
+  dependsOn: Deploy_Staging
+  condition: succeeded()
+  jobs:
+  - job: DeployProdJob
+    displayName: 'Deploy to Production'
+    steps:
+    - script: echo 'Downloading artifacts for Production...'
+      displayName: 'Simulate Artifact Download'
+
+    - script: |
+        echo "Simulating deployment of auth-service to Production..."
+        echo "Simulating deployment of community-service to Production..."
+        echo "Simulating deployment of auth-ui-dist to Production..."
+        echo "Simulating deployment of community-ui-dist to Production..."
+        echo "Simulating deployment of host-dist to Production..."
+      displayName: 'Simulate Deployment to Production'
