@@ -9,6 +9,7 @@ import Alert from 'react-bootstrap/Alert';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { jwtDecode } from 'jwt-decode';
 
+// Added Help RequestList Story
 function HelpRequestList() {
   const { loading, error, data, refetch } = useQuery(GET_HELP_REQUESTS, {
       variables: { isResolved: false }, 
