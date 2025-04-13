@@ -10,7 +10,7 @@ function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('resident');
-    const [signup, { loading, error, data }] = useMutation(SIGNUP_MUTATION); 
+    const [signup, { loading, error }] = useMutation(SIGNUP_MUTATION);
     const [message, setMessage] = useState('');
 
     const handleSubmit = async (e) => {
@@ -18,27 +18,20 @@ function Signup() {
         setMessage('');
         try {
             const result = await signup({ variables: { username, email, password, role } });
-             if (result.data?.signup?.token) { 
+             if (result.data.signup.token) {
                localStorage.setItem('authToken', result.data.signup.token);
-               setMessage(`Signup successful! Welcome ${result.data.signup.user.username}. You might need to refresh or navigate to see changes.`);
-
-               setUsername('');
-               setEmail('');
-               setPassword('');
-               setRole('resident');
-             } else {
-                setMessage(error?.message || 'An unexpected error occurred during signup.');
+               setMessage(`Signup successful! Welcome ${result.data.signup.user.username}. You might need to refresh or navigate to see changes.`);            
              }
         } catch (err) {
              console.error("Signup error:", err);
-             setMessage(error?.message || err.message || 'Failed to sign up.');
+             setMessage(err.message || 'Failed to sign up.');
         }
     };
 
     return (
         <div>
             <h2>Sign Up</h2>
-             {message && <Alert variant={error || message.startsWith('Failed') || message.startsWith('User already exists') || message.startsWith('Username is already taken') || message.startsWith('Invalid role') ? 'danger' : 'success'}>{message}</Alert>}
+             {message && <Alert variant={error ? 'danger' : 'success'}>{message}</Alert>}
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
                     <Form.Label>Username</Form.Label>
@@ -50,7 +43,7 @@ function Signup() {
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+                    <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </Form.Group>
                  <Form.Group className="mb-3">
                      <Form.Label>Role</Form.Label>

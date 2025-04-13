@@ -26,41 +26,52 @@ const resolvers = {
       const filter = category ? { category } : {};
       return await CommunityPost.find(filter).sort({ createdAt: -1 });
     },
+    getPost: async (_, { id }) => {
+      return await CommunityPost.findById(id);
+    },
     getHelpRequests: async (_, { isResolved }) => {
       const filter = typeof isResolved === 'boolean' ? { isResolved } : {};
       return await HelpRequest.find(filter).sort({ createdAt: -1 });
     },
+    getHelpRequest: async (_, { id }) => {
+      return await HelpRequest.findById(id);
+    },
   },
   Mutation: {
     createPost: async (_, { input }) => {
-      if (!input || !input.author || !input.title || !input.content || !input.category) {
-          throw new Error("Missing required fields for creating a post.");
-      }
-      if (!['news', 'discussion'].includes(input.category)) {
-          throw new Error("Invalid category specified for post.");
-      }
       const newPost = new CommunityPost(input);
       await newPost.save();
       return newPost;
     },
+     updatePost: async (_, { id, input }) => {
+       return await CommunityPost.findByIdAndUpdate(id, input, { new: true });
+     },
+     deletePost: async (_, { id }) => {
+       await CommunityPost.findByIdAndDelete(id);
+       return "Post deleted successfully";
+     },
+
     createHelpRequest: async (_, { input }) => {
-      if (!input || !input.author || !input.description) {
-          throw new Error("Missing required fields for creating a help request.");
-      }
-      const newRequest = new HelpRequest({
-          ...input,
-          isResolved: false,
-          volunteers: []
-      });
+      const newRequest = new HelpRequest(input);
       await newRequest.save();
       return newRequest;
     },
+     updateHelpRequest: async (_, { id, input }) => {
+       return await HelpRequest.findByIdAndUpdate(id, input, { new: true });
+     },
     volunteerForRequest: async (_, { requestId, volunteerId }) => {
        return await HelpRequest.findByIdAndUpdate(
          requestId,
-         { $addToSet: { volunteers: volunteerId } },
+         { $addToSet: { volunteers: volunteerId } }, 
          { new: true }
        );
+     },
+    resolveHelpRequest: async (_, { id }) => {
+      return await HelpRequest.findByIdAndUpdate(id, { isResolved: true }, { new: true });
+    },
+     deleteHelpRequest: async (_, { id }) => {
+       await HelpRequest.findByIdAndDelete(id);
+       return "Help request deleted successfully";
      },
   },
 };

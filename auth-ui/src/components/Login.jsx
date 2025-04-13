@@ -17,24 +17,20 @@ function Login() {
          setMessage('');
         try {
             const result = await login({ variables: { email, password } });
-             if (result.data?.login?.token) { // Optional chaining
-                localStorage.setItem('authToken', result.data.login.token);
-                setMessage(`Login successful! Welcome back ${result.data.login.user.username}. You might need to refresh or navigate to see changes.`);
-                setEmail('');
-                setPassword('');
-             } else {
-                setMessage(error?.message || 'An unexpected error occurred during login.');
+             if (result.data.login.token) {
+                localStorage.setItem('authToken', result.data.login.token);               
+                setMessage(`Login successful! Welcome back ${result.data.login.user.username}. You might need to refresh or navigate to see changes.`);               
              }
         } catch (err) {
              console.error("Login error:", err);
-             setMessage(error?.message || err.message || 'Failed to log in.');
+             setMessage(err.message || 'Failed to log in.');
         }
     };
 
     return (
         <div>
             <h2>Login</h2>
-             {message && <Alert variant={error || message.startsWith('Failed') || message.startsWith('Invalid credentials') ? 'danger' : 'success'}>{message}</Alert>}
+             {message && <Alert variant={error ? 'danger' : 'success'}>{message}</Alert>}
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
                     <Form.Label>Email</Form.Label>

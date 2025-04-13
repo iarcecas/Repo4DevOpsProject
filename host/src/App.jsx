@@ -8,10 +8,12 @@ import Alert from 'react-bootstrap/Alert';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ApolloProvider } from '@apollo/client';
 
+const AuthModule = React.lazy(() => import('auth_ui/Auth'));
 const authRoutesPromise = import('auth_ui/authRoutes');
 const authApolloClientPromise = import('auth_ui/apolloClient');
 
-const communityRoutesPromise = import('community_ui/communityRoutes');
+const CommunityModule = React.lazy(() => import('community_ui/Community'));
+const communityNavItemsPromise = import('community_ui/communityRoutes');
 const communityApolloClientPromise = import('community_ui/apolloClient');
 
 const ProtectedRoute = ({ children }) => {
@@ -24,43 +26,40 @@ const ProtectedRoute = ({ children }) => {
 
 
 function App() {
-    const [authRoutesList, setAuthRoutesList] = useState([]);
-    const [communityRoutesList, setCommunityRoutesList] = useState([]);
+    const [authRoutes, setAuthRoutes] = useState([]);
+    const [communityNavItems, setCommunityNavItems] = useState([]);
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('authToken'));
-    const [authClientInstance, setAuthClientInstance] = useState(null);
-    const [communityClientInstance, setCommunityClientInstance] = useState(null);
+    const [authClient, setAuthClient] = useState(null);
+    const [communityClient, setCommunityClient] = useState(null);
 
      useEffect(() => {
-         const checkLoginStatus = () => {
+         const handleStorageChange = () => {
              setIsLoggedIn(!!localStorage.getItem('authToken'));
          };
-         checkLoginStatus();
-         window.addEventListener('storage', checkLoginStatus);
-         const interval = setInterval(checkLoginStatus, 3000);
+         window.addEventListener('storage', handleStorageChange);
+         const interval = setInterval(() => {
+            handleStorageChange();
+         }, 1000);
 
          return () => {
-             window.removeEventListener('storage', checkLoginStatus);
+             window.removeEventListener('storage', handleStorageChange);
              clearInterval(interval);
          };
      }, []);
 
 
      useEffect(() => {
-      authRoutesPromise
-        .then(module => setAuthRoutesList(module.default || []))
-        .catch(err => console.error("Failed to load auth routes:", err));
-      communityRoutesPromise
-        .then(module => setCommunityRoutesList(module.default || []))
-        .catch(err => console.error("Failed to load community routes:", err));
+      authRoutesPromise.then(module => setAuthRoutes(module.default || [])).catch(err => console.error("Failed to load auth routes", err));
+      communityNavItemsPromise.then(module => setCommunityNavItems(module.default || [])).catch(err => console.error("Failed to load community nav items", err));
 
       authApolloClientPromise
-          .then(module => setAuthClientInstance(module.default))
-          .catch(err => console.error("Failed to load auth apollo client:", err));
+          .then(module => setAuthClient(module.default))
+          .catch(err => console.error("Failed to load auth apollo client", err));
 
       communityApolloClientPromise
-          .then(module => setCommunityClientInstance(module.default))
-          .catch(err => console.error("Failed to load community apollo client:", err));
-     }, []);
+          .then(module => setCommunityClient(module.default))
+          .catch(err => console.error("Failed to load community apollo client", err));
+    }, []);
 
    const handleLogout = () => {
         localStorage.removeItem('authToken');
@@ -68,7 +67,7 @@ function App() {
         window.location.href = '/login';
    };
 
-   if (!authClientInstance || !communityClientInstance) {
+   if (!authClient || !communityClient) {
     return (
        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
            <Spinner animation="border" role="status">
@@ -76,53 +75,57 @@ function App() {
            </Spinner>
        </div>
     );
-   }
+  }
 
   return (
     <Router>
       <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
         <Container>
-          <Navbar.Brand as={Link} to="/">Community Hub (Host)</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/">Community Hub</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link as={Link} to="/community/">Community</Nav.Link>
-            </Nav>
-            <Nav>
-              {!isLoggedIn && <Nav.Link as={Link} to="/signup">Sign Up</Nav.Link>}
+              {communityNavItems.map(item => (
+                (!item.requiresAuth || isLoggedIn) && (
+                  <Nav.Link key={item.path} as={Link} to={`/community/${item.path}`}>
+                    {item.label}
+                  </Nav.Link>
+                )
+              ))}
               {!isLoggedIn && <Nav.Link as={Link} to="/login">Login</Nav.Link>}
-              {isLoggedIn && <Nav.Link onClick={handleLogout} style={{color: 'rgba(255,255,255,.55)', cursor: 'pointer'}}>Logout</Nav.Link>}
+              {!isLoggedIn && <Nav.Link as={Link} to="/signup">Sign Up</Nav.Link>}
             </Nav>
+            {isLoggedIn && <Nav.Link onClick={handleLogout} style={{color: 'rgba(255,255,255,.55)', cursor: 'pointer'}}>Logout</Nav.Link>}
           </Navbar.Collapse>
         </Container>
       </Navbar>
 
       <Container>
-            <Suspense fallback={<Spinner animation="border" role="status"><span className="visually-hidden">Loading Module Routes...</span></Spinner>}>
+            <Suspense fallback={<Spinner animation="border" role="status"><span className="visually-hidden">Loading Module...</span></Spinner>}>
                 <Routes>
                     <Route index element={<div><h2>Welcome to the Community Hub!</h2><p>Select a section from the navigation.</p></div>} />
 
-                    {authRoutesList.map(route => (
+                    {authRoutes.map(route => (
                         <Route
                             key={`auth-${route.path}`}
-                            path={route.path} 
+                            path={route.path}
                             element={
-                                <ApolloProvider client={authClientInstance}>
+                                <ApolloProvider client={authClient}>
                                     {route.element}
                                 </ApolloProvider>
                             }
                         />
                     ))}
 
-                    {communityRoutesList.map(route => {
+                    {communityNavItems.map(route => {
                         const Element = route.element;
-                        const path = `/community${route.path === '/' ? '' : route.path}`;
+                        const path = `/community/${route.path}`;
                         return (
                             <Route
                                 key={`community-${path}`}
                                 path={path}
                                 element={
-                                    <ApolloProvider client={communityClientInstance}>
+                                    <ApolloProvider client={communityClient}>
                                         {route.requiresAuth ? (
                                             <ProtectedRoute>{Element}</ProtectedRoute>
                                         ) : (
@@ -133,7 +136,7 @@ function App() {
                             />
                         );
                     })}
-                    <Route path="*" element={<Alert variant="warning">Page Not Found in Host</Alert>} />
+                    <Route path="*" element={<Alert variant="warning">Page Not Found</Alert>} />
                 </Routes>
             </Suspense>
         </Container>

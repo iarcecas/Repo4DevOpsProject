@@ -1,31 +1,28 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { CREATE_POST } from '../graphql/mutations';
-import { GET_POSTS } from '../graphql/queries'; 
+import { GET_POSTS } from '../graphql/queries';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
-import { jwtDecode } from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode';
 
 function CreatePost() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [category, setCategory] = useState('news');
+  const [category, setCategory] = useState('news'); 
   const [createPost, { loading, error }] = useMutation(CREATE_POST, {
-      refetchQueries: [
-        { query: GET_POSTS, variables: { category: null } },
-        { query: GET_POSTS, variables: { category: 'news' } }, 
-        { query: GET_POSTS, variables: { category: 'discussion' } } 
-      ],
+      refetchQueries: [{ query: GET_POSTS }],
        awaitRefetchQueries: true, 
   });
   const [message, setMessage] = useState('');
+
    const token = localStorage.getItem('authToken');
    let currentUserId = null;
    if (token) {
        try {
            const decodedToken = jwtDecode(token);
-           currentUserId = decodedToken.userId; 
+           currentUserId = decodedToken.userId;
        } catch (e) {
            console.error("Error decoding token:", e);
        }
@@ -49,7 +46,7 @@ function CreatePost() {
       setCategory('news');
     } catch (err) {
       console.error("Error creating post:", err);
-      setMessage(`Failed to create post: ${error?.message || err.message}`);
+      setMessage(`Failed to create post: ${err.message}`);
     }
   };
 

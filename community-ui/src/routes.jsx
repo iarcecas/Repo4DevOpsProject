@@ -1,23 +1,15 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
 import PostList from './components/PostList';
+import HelpRequestList from './components/HelpRequestList';
 import CreatePost from './components/CreatePost';
-// Working
-function AppRoutes() {
-  return (
-    <Routes>
-      <Route path="/posts" element={<PostList />} />
-      <Route path="/posts/news" element={<PostList category="news" />} />
-      <Route path="/posts/discussion" element={<PostList category="discussion" />} />
-      <Route path="/post/create-post" element={<CreatePost />} />
-      <Route path="/" element={<div>Community UI Home</div>} />
-    
-      {/* NEW ROUTES for AB#212 and AB#216 */}
-      <Route path="/help-requests" element={<HelpRequestList />} />
-      <Route path="/create-help-request" element={<CreateHelpRequest />} />
-    </Routes>    
- 
-  );
-}
+import CreateHelpRequest from './components/CreateHelpRequest';
 
-export default AppRoutes;
+const communityNavItems = [
+    { path: 'news', label: 'News', element: <PostList category="news" /> },
+    { path: 'discussions', label: 'Discussions', element: <PostList category="discussion" /> },
+    { path: 'help-requests', label: 'Help Requests', element: <HelpRequestList /> },
+    { path: 'create-post', label: 'Create Post', element: <CreatePost />, requiresAuth: true },
+    { path: 'create-help-request', label: 'Request Help', element: <CreateHelpRequest />, requiresAuth: true },
+];
+
+export default communityNavItems;

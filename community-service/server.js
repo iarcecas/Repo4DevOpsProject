@@ -8,10 +8,12 @@ import typeDefs from './graphql/typeDefs.js';
 import resolvers from './graphql/resolvers.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import typeDefs from './graphql/typeDefs.js'; 
-import resolvers from './graphql/resolvers.js';
 
 dotenv.config();
+
+const customResolvers = {
+  ...resolvers,
+};
 
 async function startServer() {
   const app = express();
@@ -21,7 +23,7 @@ async function startServer() {
 
   const server = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers: customResolvers,
   });
 
   await server.start();

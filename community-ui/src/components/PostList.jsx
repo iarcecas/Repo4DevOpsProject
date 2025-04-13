@@ -7,7 +7,7 @@ import Alert from 'react-bootstrap/Alert';
 
 function PostList({ category }) {
   const { loading, error, data } = useQuery(GET_POSTS, {
-    variables: { category }, 
+    variables: { category },
     fetchPolicy: "network-only",
   });
 
@@ -41,8 +41,7 @@ function PostList({ category }) {
               </Card.Subtitle>
               <Card.Text>{post.content}</Card.Text>
               <Card.Footer className="text-muted">
-                {/* Format date nicely */}
-                Posted on: {new Date(parseInt(post.createdAt)).toLocaleDateString()}
+                Posted on: {new Date(post.createdAt).toLocaleDateString()}
               </Card.Footer>
             </Card.Body>
           </Card>

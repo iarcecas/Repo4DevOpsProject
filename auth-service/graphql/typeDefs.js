@@ -1,4 +1,4 @@
-import { gql } from 'graphql-tag';
+import { gql } from 'graphql-tag'; 
 
 const typeDefs = gql`
   scalar Date
@@ -17,13 +17,13 @@ const typeDefs = gql`
   }
 
   type Query {
-    dummyAuthQuery: String
+    dummy: String
   }
 
   type Mutation {
     signup(username: String!, email: String!, password: String!, role: String!): AuthPayload!
     login(email: String!, password: String!): AuthPayload!
-    # logout mutation will be added later
+    logout: String
   }
 `;
 

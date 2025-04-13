@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-const Schema = mongoose.Schema;
+import { Schema } from 'mongoose';
 
 const HelpRequestSchema = new Schema({
   author: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'User', 
     required: true,
   },
   description: {
@@ -21,7 +21,7 @@ const HelpRequestSchema = new Schema({
   },
   volunteers: [{
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'User', 
   }],
   createdAt: {
     type: Date,
