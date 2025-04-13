@@ -4,8 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+
   },
+  
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -20,5 +22,8 @@
     "graphql-tag": "^2.12.6",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
