@@ -10,7 +10,7 @@ export default defineConfig({
           name: "community_ui",
           filename: "remoteEntry.js",
           exposes: {
-            //   './Community': './src/Community.jsx',
+              // './Community': './src/Community.jsx',
               './communityRoutes': './src/routes',
               './apolloClient': './src/apollo'
           },
