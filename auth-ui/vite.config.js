@@ -9,9 +9,10 @@ export default defineConfig({
       name: 'auth_ui',
       filename: 'remoteEntry.js',
       exposes: {
-          // './Auth': './src/Auth.jsx',
-        './authRoutes': './src/routes.jsx',
-        './apolloClient': './src/apollo.js'
+        
+  './authRoutes': './src/routes.jsx',
+  './apolloClient': './src/apollo.js',
+
       },
       shared: ['react', 'react-dom', 'react-router-dom', '@apollo/client', 'graphql', 'react-bootstrap', 'bootstrap']
     })
