@@ -10,9 +10,9 @@ export default defineConfig({
           name: "community_ui",
           filename: "remoteEntry.js",
           exposes: {
-            //   './Community': './src/Community.jsx',
-            //   './communityRoutes': './src/routes',
-            //   './apolloClient': './src/apollo'
+              './Community': './src/Community.jsx',
+              './communityRoutes': './src/routes',
+              './apolloClient': './src/apollo'
           },
           remotes: {              
               auth_ui: "http://localhost:5001/assets/remoteEntry.js",
