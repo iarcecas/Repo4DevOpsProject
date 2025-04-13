@@ -29,6 +29,12 @@ stages:
         npm ci
       displayName: 'Install Dependencies for $(authServiceDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(authServiceDir)'
+    
+    - script: |
+        echo "Running npm ci for $(communityServiceDir)..."
+        npm ci
+      displayName: 'Install Dependencies for $(communityServiceDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)'
 
 # FOR AB 249 auth-service
     - script: |
@@ -56,12 +62,6 @@ stages:
         npm run build
       displayName: 'Build $(authUiDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(authUiDir)'
-
-    - script: |
-        echo "Running npm ci for $(communityServiceDir)..."
-        npm ci
-      displayName: 'Install Dependencies for $(communityServiceDir)'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)'
 
     - script: |
         echo "Running npm ci for $(communityUiDir)..."
