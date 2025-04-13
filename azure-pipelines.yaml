@@ -30,12 +30,19 @@ stages:
       displayName: 'Install Dependencies for $(authServiceDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(authServiceDir)'
 
-# FOR AB 249
+# FOR AB 249 auth-service
     - script: |
         echo "Running unit tests for $(authServiceDir)..."
         node --experimental-vm-modules node_modules/jest/bin/jest.js
       displayName: 'Run Tests for $(authServiceDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(authServiceDir)'
+
+# FOR AB 249 community-service
+    - script: |
+        echo "Running unit tests for $(communityServiceDir)..."
+        node --experimental-vm-modules node_modules/jest/bin/jest.js
+      displayName: 'Run Tests for $(communityServiceDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityServiceDir)'
 
 
     - script: |
