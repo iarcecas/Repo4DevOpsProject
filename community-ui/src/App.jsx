@@ -18,6 +18,9 @@ function App() {
                <Nav.Link as={Link} to="/posts">All Posts</Nav.Link>
                <Nav.Link as={Link} to="/posts/news">News</Nav.Link>
                <Nav.Link as={Link} to="/posts/discussion">Discussion</Nav.Link>
+               <Nav.Link as={Link} to="/create-help-request">Create Help Request</Nav.Link>
+                <Nav.Link as={Link} to="/help-requests">Help Requests</Nav.Link>
+
             </Nav>
             <Nav>
             </Nav>
