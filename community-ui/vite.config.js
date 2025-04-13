@@ -9,9 +9,14 @@ export default defineConfig({
           name: "community_ui",
           filename: "remoteEntry.js",
           exposes: {
-              './Community': './src/Community.jsx', 
-              './communityRoutes': './src/routes.jsx',
-              './apolloClient': './src/apollo.js' 
+
+  './Community': './src/Community.jsx',
+  './communityRoutes': './src/routes.jsx',
+  './apolloClient': './src/apollo.js',
+},
+          remotes: {              
+              auth_ui: "http://localhost:5001/assets/remoteEntry.js",
+
           },
           shared: ['react', 'react-dom', 'react-router-dom', '@apollo/client', 'graphql', 'react-bootstrap', 'bootstrap']
       })
