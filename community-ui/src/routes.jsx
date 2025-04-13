@@ -1,4 +1,5 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import PostList from './components/PostList';
 
 function AppRoutes() {
@@ -13,17 +14,3 @@ function AppRoutes() {
 }
 
 export default AppRoutes;
-
-import HelpRequestList from './components/HelpRequestList';
-import CreatePost from './components/CreatePost';
-import CreateHelpRequest from './components/CreateHelpRequest';
-
-const communityRoutes = [
-    { path: 'news', element: <PostList category="news" /> },
-    { path: 'discussions', element: <PostList category="discussion" /> },
-    { path: 'help-requests', element: <HelpRequestList /> },
-    { path: 'create-post', element: <CreatePost />, requiresAuth: true },
-    { path: 'create-help-request', element: <CreateHelpRequest />, requiresAuth: true },
-];
-
-export default communityRoutes;
