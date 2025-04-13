@@ -9,13 +9,19 @@ export default defineConfig({
       name: 'auth_ui',
       filename: 'remoteEntry.js',
       exposes: {
-        // './Auth': './src/Auth',
-        // './authRoutes': './src/routes',
-        // './apolloClient': './src/apollo'
+          // './Auth': './src/Auth.jsx',
+        './authRoutes': './src/routes.jsx',
+        './apolloClient': './src/apollo.js'
       },
-      shared: ['react', 'react-dom', 'react-router-dom', '@apollo/client', 'graphql']
+      shared: ['react', 'react-dom', 'react-router-dom', '@apollo/client', 'graphql', 'react-bootstrap', 'bootstrap']
     })
   ],
+  server: {
+     port: 5001, 
+  },
+  preview: {
+      port: 5001,
+  },
   build: {
     modulePreload: false,
     target: 'esnext',
