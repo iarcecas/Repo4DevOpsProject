@@ -86,3 +86,11 @@ stages:
         npm run build
       displayName: 'Build $(hostDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(hostDir)'
+    
+  # FOR AB 257 - Publish Artifact for Host
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/$(hostDir)/dist'
+        ArtifactName: 'host-dist'
+        publishLocation: 'Container'
+      displayName: 'Publish host build artifact (dist folder)'  
