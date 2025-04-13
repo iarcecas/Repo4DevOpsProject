@@ -9,7 +9,7 @@ export default defineConfig({
       name: 'auth_ui',
       filename: 'remoteEntry.js',
       exposes: {
-        './Auth': './src/Auth.jsx',
+          // './Auth': './src/Auth.jsx',
         './authRoutes': './src/routes.jsx',
         './apolloClient': './src/apollo.js'
       },
