@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="2" failures="0" errors="0" time="19.077">
+  <testsuite name="Community Resolvers - getPosts" errors="0" failures="0" skipped="0" timestamp="2025-04-13T23:28:58" time="18.506" tests="2">
+    <testcase classname="Community Resolvers - getPosts should return posts sorted by createdAt when no category is provided" name="Community Resolvers - getPosts should return posts sorted by createdAt when no category is provided" time="0.006">
+    </testcase>
+    <testcase classname="Community Resolvers - getPosts should return filtered posts when a category is provided" name="Community Resolvers - getPosts should return filtered posts when a category is provided" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="3" failures="0" errors="0" time="7.331">
+  <testsuite name="Auth Resolvers - login" errors="0" failures="0" skipped="0" timestamp="2025-04-13T23:28:06" time="6.057" tests="3">
+    <testcase classname="Auth Resolvers - login should return token and user if credentials are valid" name="Auth Resolvers - login should return token and user if credentials are valid" time="0.007">
+    </testcase>
+    <testcase classname="Auth Resolvers - login should throw error if user is not found" name="Auth Resolvers - login should throw error if user is not found" time="0.011">
+    </testcase>
+    <testcase classname="Auth Resolvers - login should throw error if password does not match" name="Auth Resolvers - login should throw error if password does not match" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>
