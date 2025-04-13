@@ -6,23 +6,20 @@ export default defineConfig({
   plugins: [
     react(),
     federation({
-      name: 'auth_ui',
-      filename: 'remoteEntry.js',
-      exposes: {
-        
-  './authRoutes': './src/routes.jsx',
-  './apolloClient': './src/apollo.js',
-
+      name: 'host_app',
+      remotes: {
+        auth_ui: 'http://localhost:5001/assets/remoteEntry.js',
+        community_ui: 'http://localhost:5002/assets/remoteEntry.js', 
       },
       shared: ['react', 'react-dom', 'react-router-dom', '@apollo/client', 'graphql', 'react-bootstrap', 'bootstrap']
     })
   ],
-  server: {
-     port: 5001, 
-  },
-  preview: {
-      port: 5001,
-  },
+   server: {
+      port: 5000,
+   },
+    preview: {
+        port: 5000,
+    },
   build: {
     modulePreload: false,
     target: 'esnext',

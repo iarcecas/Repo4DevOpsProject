@@ -2,21 +2,22 @@ trigger:
 - main
 
 pool:
-  name: 'COMP367-Windows'
+  name: 'COMP367-Windows' 
 
 variables:
-  nodeVersion: '18.x'
+  nodeVersion: '18.x' 
   authServiceDir: 'auth-service'
   authUiDir: 'auth-ui'
   communityServiceDir: 'community-service'
   communityUiDir: 'community-ui'
+  hostDir: 'host' 
 
 stages:
 - stage: Build_And_Install
   displayName: 'Install Dependencies and Build'
   jobs:
   - job: BuildAndInstall
-    displayName: 'Install & Build Services and UIs'
+    displayName: 'Install & Build Services, UIs, and Host'
     steps:
     - task: NodeTool@0
       inputs:
@@ -58,3 +59,15 @@ stages:
         npm run build
       displayName: 'Build $(communityUiDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(communityUiDir)'
+
+    - script: |
+        echo "Running npm ci for $(hostDir)..."
+        npm ci
+      displayName: 'Install Dependencies for $(hostDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(hostDir)'
+
+    - script: |
+        echo "Building $(hostDir)..."
+        npm run build
+      displayName: 'Build $(hostDir)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/$(hostDir)'
