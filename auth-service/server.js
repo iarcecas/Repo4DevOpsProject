@@ -10,26 +10,27 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 async function startServer() {
-    const app = express();
-    const httpServer = createServer(app);
+  const app = express();
+  const httpServer = createServer(app);
 
-    connectDB();
+  connectDB();
 
-    const server = new ApolloServer({
-        typeDefs,
-        resolvers,
-    });
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+  });
 
-    await server.start();
+  await server.start();
 
-    app.use(cors());
-    app.use(json());
-    app.use('/graphql', expressMiddleware(server));
+  app.use(cors());
+  app.use(json());
+  app.use('/graphql', expressMiddleware(server));
 
-    const PORT = process.env.PORT || 4001;
-    httpServer.listen(PORT, () => {
-        console.log(`Auth Service running on http://localhost:${PORT}/graphql`);
-    });
+  const PORT = process.env.PORT || 4001;
+  httpServer.listen(PORT, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Auth Service running on http://localhost:${PORT}/graphql`);
+  });
 }
 
 startServer();

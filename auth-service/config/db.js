@@ -8,9 +8,8 @@ const connectDB = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log('Auth MongoDB Connected...');
+  // eslint-disable-next-line no-unused-vars
   } catch (err) {
-    console.error(err.message);
     process.exit(1);
   }
 };

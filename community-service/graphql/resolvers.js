@@ -43,36 +43,36 @@ const resolvers = {
       await newPost.save();
       return newPost;
     },
-     updatePost: async (_, { id, input }) => {
-       return await CommunityPost.findByIdAndUpdate(id, input, { new: true });
-     },
-     deletePost: async (_, { id }) => {
-       await CommunityPost.findByIdAndDelete(id);
-       return "Post deleted successfully";
-     },
+    updatePost: async (_, { id, input }) => {
+      return await CommunityPost.findByIdAndUpdate(id, input, { new: true });
+    },
+    deletePost: async (_, { id }) => {
+      await CommunityPost.findByIdAndDelete(id);
+      return 'Post deleted successfully';
+    },
 
     createHelpRequest: async (_, { input }) => {
       const newRequest = new HelpRequest(input);
       await newRequest.save();
       return newRequest;
     },
-     updateHelpRequest: async (_, { id, input }) => {
-       return await HelpRequest.findByIdAndUpdate(id, input, { new: true });
-     },
+    updateHelpRequest: async (_, { id, input }) => {
+      return await HelpRequest.findByIdAndUpdate(id, input, { new: true });
+    },
     volunteerForRequest: async (_, { requestId, volunteerId }) => {
-       return await HelpRequest.findByIdAndUpdate(
-         requestId,
-         { $addToSet: { volunteers: volunteerId } }, 
-         { new: true }
-       );
-     },
+      return await HelpRequest.findByIdAndUpdate(
+        requestId,
+        { $addToSet: { volunteers: volunteerId } }, 
+        { new: true }
+      );
+    },
     resolveHelpRequest: async (_, { id }) => {
       return await HelpRequest.findByIdAndUpdate(id, { isResolved: true }, { new: true });
     },
-     deleteHelpRequest: async (_, { id }) => {
-       await HelpRequest.findByIdAndDelete(id);
-       return "Help request deleted successfully";
-     },
+    deleteHelpRequest: async (_, { id }) => {
+      await HelpRequest.findByIdAndDelete(id);
+      return 'Help request deleted successfully';
+    },
   },
 };
 

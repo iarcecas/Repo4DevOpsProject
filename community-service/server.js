@@ -6,7 +6,6 @@ import http from 'http';
 import connectDB from './config/db.js';
 import typeDefs from './graphql/typeDefs.js';
 import resolvers from './graphql/resolvers.js';
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 dotenv.config();

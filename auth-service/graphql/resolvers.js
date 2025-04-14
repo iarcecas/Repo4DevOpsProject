@@ -1,5 +1,4 @@
 import User from '../models/User.js';
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 import dotenv from 'dotenv';
@@ -7,7 +6,7 @@ dotenv.config();
 
 const resolvers = {
   Query: {
-     dummy: () => "This is a dummy query to ensure schema isn't empty"
+    dummy: () => 'This is a dummy query to ensure schema isn\'t empty'
   },
   Mutation: {
     signup: async (_, { username, email, password, role }) => {
@@ -15,13 +14,13 @@ const resolvers = {
       if (existingUser) {
         throw new Error('User already exists with that email.');
       }
-       const existingUsername = await User.findOne({ username });
-       if (existingUsername) {
-         throw new Error('Username is already taken.');
-       }
+      const existingUsername = await User.findOne({ username });
+      if (existingUsername) {
+        throw new Error('Username is already taken.');
+      }
 
       if (!['resident', 'business_owner', 'community_organizer'].includes(role)) {
-         throw new Error('Invalid role specified.');
+        throw new Error('Invalid role specified.');
       }
 
       const user = new User({ username, email, password, role });
@@ -50,8 +49,8 @@ const resolvers = {
 
       return { token, user };
     },
-     logout: () => {
-      return "Successfully logged out";
+    logout: () => {
+      return 'Successfully logged out';
     }
   },
 };
