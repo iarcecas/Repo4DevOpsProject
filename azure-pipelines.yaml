@@ -50,13 +50,6 @@ stages:
       displayName: 'Install Dependencies for $(hostDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(hostDir)'
 
-    - task: JavaToolInstaller@0
-      inputs:
-        versionSpec: '17'
-        jdkArchitectureOption: 'x86'
-        jdkSourceOption: 'Download'
-      displayName: 'Install Java JDK 17'
-
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: 'SonarCloudServiceConnection'
