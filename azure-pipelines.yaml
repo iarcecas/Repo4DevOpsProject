@@ -63,7 +63,6 @@ stages:
           sonar.javascript.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(coverageReportFile),$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(coverageReportFile)
           sonar.javascript.junit.reportPaths=$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(testResultsFile),$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(testResultsFile)
           sonar.coverage.exclusions=**/node_modules/**,**/__tests__/**,**/*.test.js
-          sonar.testExecutionReportPaths=$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(testResultsFile),$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(testResultsFile)
       displayName: 'Prepare SonarCloud Analysis'
 
     - script: node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --reporters=default --reporters=jest-junit --coverage --coverageReporters=cobertura
