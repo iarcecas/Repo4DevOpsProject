@@ -50,25 +50,21 @@ stages:
       displayName: 'Install Dependencies for $(hostDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(hostDir)'
 
-    - task: SonarQubePrepare@5
+    - task: SonarCloudPrepare@1
       inputs:
-        SonarQube: 'SonarCloudServiceConnection'
+        SonarCloud: 'SonarCloudServiceConnection'
+        organization: 'iarcecas'
         scannerMode: 'CLI'
         configMode: 'manual'
         cliProjectKey: 'iarcecas_Project4Project'
         cliProjectName: 'Project4Project'
         cliSources: '.'
         extraProperties: |
-          # Use the JS specific property for Cobertura coverage reports
           sonar.javascript.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(coverageReportFile),$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(coverageReportFile)
-          # Keep JUnit report paths (or use sonar.testExecutionReportPaths if preferred by your SQ version)
           sonar.javascript.junit.reportPaths=$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(testResultsFile),$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(testResultsFile)
-          # Exclusions remain useful
           sonar.coverage.exclusions=**/node_modules/**,**/__tests__/**,**/*.test.js
-          # You might consolidate test reporting with sonar.testExecutionReportPaths
           sonar.testExecutionReportPaths=$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(testResultsFile),$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(testResultsFile)
-
-      displayName: 'Prepare SonarQube Analysis'
+      displayName: 'Prepare SonarCloud Analysis'
 
     - script: node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --reporters=default --reporters=jest-junit --coverage --coverageReporters=cobertura
       displayName: 'Run Tests & Coverage for $(authServiceDir)'
@@ -122,13 +118,13 @@ stages:
       displayName: 'Build $(hostDir)'
       workingDirectory: '$(System.DefaultWorkingDirectory)/$(hostDir)'
 
-    - task: SonarQubeAnalyze@5
-      displayName: 'Run SonarQube Analysis'
+    - task: SonarCloudAnalyze@1
+      displayName: 'Run SonarCloud Analysis'
 
-    - task: SonarQubePublish@5
+    - task: SonarCloudPublish@1
       inputs:
         pollingTimeoutSec: '300'
-      displayName: 'Publish SonarQube Quality Gate Result'
+      displayName: 'Publish SonarCloud Quality Gate Result'
 
     - task: PublishBuildArtifacts@1
       inputs:
