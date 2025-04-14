@@ -52,7 +52,7 @@ stages:
 
     - task: SonarQubePrepare@5
       inputs:
-        SonarQube: 'SonarQube4DevOps'
+        SonarQube: 'SonarCloudServiceConnection'
         scannerMode: 'CLI'
         configMode: 'manual'
         cliProjectKey: 'iarcecas_Project4Project'
