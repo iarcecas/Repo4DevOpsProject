@@ -59,9 +59,13 @@ stages:
         cliProjectName: 'Project4Project'
         cliSources: '.'
         extraProperties: |
-          sonar.coverageReportPaths=$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(coverageReportFile),$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(coverageReportFile)
+          # Use the JS specific property for Cobertura coverage reports
+          sonar.javascript.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(coverageReportFile),$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(coverageReportFile)
+          # Keep JUnit report paths (or use sonar.testExecutionReportPaths if preferred by your SQ version)
           sonar.javascript.junit.reportPaths=$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(testResultsFile),$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(testResultsFile)
+          # Exclusions remain useful
           sonar.coverage.exclusions=**/node_modules/**,**/__tests__/**,**/*.test.js
+          # You might consolidate test reporting with sonar.testExecutionReportPaths
           sonar.testExecutionReportPaths=$(System.DefaultWorkingDirectory)/$(authServiceDir)/$(testResultsFile),$(System.DefaultWorkingDirectory)/$(communityServiceDir)/$(testResultsFile)
 
       displayName: 'Prepare SonarQube Analysis'
